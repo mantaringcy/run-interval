@@ -24,14 +24,20 @@ const IntervalTimer = ({
   const runSeconds = runUnit === "hours" ? runTime * 60 * 60 : runTime * 60;
   const walkSeconds = walkUnit === "hours" ? walkTime * 60 * 60 : walkTime * 60;
 	/*/
-  const runSeconds = Number(runTime); // use input as seconds
-  const walkSeconds = Number(walkTime); // use input as seconds
+
+  // const runSeconds = Number(runTime); // use input as seconds
+  // const walkSeconds = Number(walkTime); // use input as seconds
+  // const runSecondsRef = useRef(Number(runTime));
+  // const walkSecondsRef = useRef(Number(walkTime));
+
   const runSecondsRef = useRef(Number(runTime));
   const walkSecondsRef = useRef(Number(walkTime));
+  runSecondsRef.current = Number(runTime);
+  walkSecondsRef.current = Number(walkTime);
   //*/
 
   const labelRef = useRef("Run");
-  const timeRef = useRef(runSeconds);
+  const timeRef = useRef(runSecondsRef);
   const sessionsRef = useRef(Number(sessions));
   const [remainingSessions, setRemainingSessions] = useState(Number(sessions)); // keep for display only
 
@@ -160,7 +166,7 @@ const IntervalTimer = ({
         {!autoStart && (
           <button
             className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-            onClick={() => startTimer("Run", runSeconds)}
+            onClick={() => startTimer("Run", runSecondsRef.current)}
             disabled={isRunning}
           >
             Start
@@ -180,6 +186,8 @@ const IntervalTimer = ({
           onClick={() => {
             clearInterval(intervalRef.current);
             intervalRef.current = null;
+            sessionsRef.current = Number(sessions); // ✅ reset sessions
+            timerStarted = false; // ✅ reset so autoStart works again
             onBack();
           }}
         >
